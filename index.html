@@ -9,11 +9,18 @@
   </head>
   <body>
     <div id="app">
-      <form id="control-panel">
+      <div id="control-panel">
         <label for="dice-num">Dice: </label>
         <input id="dice-num" type="number" value="1" min="1"/>
-        <button>Roll the Dice</button>
-      </form>
+        <label for="dice-color">Color: </label>
+        <select id="dice-color">
+          <option value="white">White</option>
+          <option value="blue">Blue</option>
+          <option value="black">Black</option>
+          <option value="red">Red</option>
+        </select>
+        <button>Roll Dice</button>
+      </div>
       <div id="scene-container"></div>
     </div>
     <script type="module" src="./src/main.js"></script>

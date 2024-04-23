@@ -1,4 +1,4 @@
-import { DirectionalLight, HemisphereLight, MathUtils } from 'three';
+import { SpotLight, HemisphereLight, MathUtils } from 'three';
 
 
 function createLights() {
@@ -8,9 +8,13 @@ function createLights() {
     1,
   );
 
-  const mainLight = new DirectionalLight('white', 1);
-  mainLight.position.set(0, 20, 10);
+  const mainLight = new SpotLight('white', 1);
+  mainLight.position.set(0, 1, 0);
   mainLight.rotation.z = MathUtils.degToRad(30);
+  mainLight.penumbra = 1;
+  mainLight.castShadow = true;
+  mainLight.shadow.mapSize.width = 2048;
+  mainLight.shadow.mapSize.height = 2048;
 
   return { ambientLight, mainLight };
 }

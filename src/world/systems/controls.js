@@ -3,18 +3,12 @@ import { MathUtils } from 'three';
 
 function createControls(camera, canvas) {
   const controls = new OrbitControls(camera, canvas);
-  const orbitLimit = MathUtils.degToRad(45);
 
   controls.enableDamping = true;
+  controls.maxPolarAngle = Math.PI - MathUtils.degToRad(90);
 
-  controls.minAzimuthAngle = -orbitLimit;
-  controls.maxAzimuthAngle = orbitLimit;
-
-  controls.minPolarAngle = orbitLimit;
-  controls.maxPolarAngle = Math.PI - orbitLimit;
-
-  controls.minDistance = 25;
-  controls.maxDistance = 1000;
+  controls.minDistance = 0.01;
+  controls.maxDistance = 0.5;
 
   // forward controls.update to our custom .tick method
   controls.tick = () => controls.update();

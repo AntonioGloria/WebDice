@@ -1,3 +1,6 @@
+import { DieModel } from './components/die.js';
+import { Floor } from './components/floor.js';
+
 import { createCamera } from './components/camera.js';
 import { createLights } from './components/lights.js';
 import { createScene } from './components/scene.js';
@@ -32,16 +35,18 @@ class World {
 
   async init() {
     try {
-      const clockParts = await loadModels(modelPaths);
-      const clockModel = new ClockModel(clockParts);
-      clockModel.face.material = await clockMaterial();
+      const floorModel = new Floor();
+      const dieModel = new DieModel('white');
 
-      const bgEnvMap = await loadEnvTexture(bgEnvMapPath);
-      scene.environment = bgEnvMap;
+      // const bgEnvMap = await loadEnvTexture(bgEnvMapPath);
+      // scene.environment = bgEnvMap;
 
-      controls.target.copy(clockModel.position);
-      scene.add(clockModel);
-      loop.updatables.push(clockModel);
+      dieModel.position.set(0, 0.008, 0);
+
+      controls.target.copy(dieModel.position);
+      scene.add(floorModel);
+      scene.add(dieModel);
+      loop.updatables.push(dieModel);
     }
 
     catch(error) {
