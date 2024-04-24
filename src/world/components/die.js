@@ -1,4 +1,5 @@
 import { Mesh, TextureLoader, MeshStandardMaterial, SRGBColorSpace } from 'three';
+import { Body, Box, Trimesh, Vec3 } from 'cannon-es';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 const gltfLoader = new GLTFLoader();
@@ -27,6 +28,11 @@ class DieModel extends Mesh {
   constructor(color) {
     super();
     this.geometry = this.setModel();
+
+    this.collider = new Body({
+      mass: 0.005,
+      shape: new Box(new Vec3(0.008, 0.008, 0.008))
+    });
 
     this.material = new MeshStandardMaterial({
       normalMap: normalMap,
@@ -65,6 +71,8 @@ class DieModel extends Mesh {
 
   tick(delta) {
     this.seconds += delta;
+    this.position.copy(this.collider.position);
+    this.quaternion.copy(this.collider.quaternion);
   }
 }
 

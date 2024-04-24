@@ -10,6 +10,9 @@ import { createRenderer } from './systems/renderer.js';
 import { Resizer } from './systems/Resizer.js';
 import { Loop } from './systems/Loop.js';
 
+import * as CANNON from 'cannon-es';
+import CannonDebugger from 'cannon-es-debugger';
+
 let camera;
 let controls;
 let renderer;
@@ -28,6 +31,10 @@ class World {
     container.append(renderer.domElement);
     controls = createControls(camera, renderer.domElement);
 
+    this.physics = new CANNON.World({
+      gravity: new CANNON.Vec3(0, -9.82, 0)
+    });
+
     const { ambientLight, mainLight } = createLights();
 
     loop.updatables.push(controls);
@@ -37,6 +44,8 @@ class World {
 
     this.floor = new Floor();
     this.dice = [];
+
+    this.physics.addBody(this.floor.collider);
   }
 
   async init() {
@@ -47,6 +56,15 @@ class World {
       controls.target.y = this.diceMid;
       scene.add(this.floor);
       this.setDiceNumber(1);
+
+      const cannonDebugger = new CannonDebugger(scene, this.physics);
+
+      const animate = () => {
+        this.physics.fixedStep();
+        cannonDebugger.update();
+        window.requestAnimationFrame(animate);
+      }
+      animate();
     }
 
     catch(error) {
@@ -68,9 +86,10 @@ class World {
 
   // methods for getting input values
   setDiceNumber(newNumber) {
-    // clear updatables and scene
+    // clear updatables, scene, and physics
     for (let i = 0; i < this.dice.length; i++) {
       scene.remove(this.dice[i]);
+      this.physics.removeBody(this.dice[i].collider);
     }
 
     loop.updatables = loop.updatables.filter(obj => !this.dice.includes(obj));
@@ -88,6 +107,7 @@ class World {
       this.dice.push(newDie);
       scene.add(newDie);
       loop.updatables.push(newDie);
+      this.physics.addBody(newDie.collider);
     }
   }
 
