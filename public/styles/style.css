@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 #app {
@@ -12,17 +13,31 @@
 #scene-container {
   width: 100%;
   height: 100%;
-  border: 1px solid red;
 }
 
 #control-panel {
   text-align: center;
-  padding: 1rem;
+  padding: 1.5rem;
   width: 100%;
-  border: 1px solid red;
   position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#control-panel span {
+  color: white;
+  font-weight: bold;
+  margin: 0 2rem;
 }
 
 #control-panel input {
   width: 4rem;
+}
+
+#roll-btn {
+  background-color: slategray;
+  color: white;
+  border-style: none;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
 }
