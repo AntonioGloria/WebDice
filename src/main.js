@@ -7,6 +7,17 @@ async function main() {
     await world.init();
 
     world.start();
+
+    const diceNumber = document.querySelector('#dice-num');
+    const colorSelect = document.querySelector('#dice-color');
+
+    colorSelect.addEventListener('change', (e) => {
+      world.setDieColor(e.target.value);
+    });
+
+    diceNumber.addEventListener('change', (e) => {
+      world.setDiceNumber(e.target.value);
+    });
   }
 
   catch(error) {

@@ -18,6 +18,9 @@ let loop;
 
 class World {
   constructor(container) {
+    this.diceWidth = 0.016;
+    this.dieColor = 'white';
+    this.diceMid = this.diceWidth/2;
     camera = createCamera();
     renderer = createRenderer();
     scene = createScene();
@@ -31,22 +34,19 @@ class World {
     scene.add(ambientLight, mainLight);
 
     const resizer = new Resizer(container, camera, renderer);
+
+    this.floor = new Floor();
+    this.dice = [];
   }
 
   async init() {
     try {
-      const floorModel = new Floor();
-      const dieModel = new DieModel('white');
-
       // const bgEnvMap = await loadEnvTexture(bgEnvMapPath);
       // scene.environment = bgEnvMap;
 
-      dieModel.position.set(0, 0.008, 0);
-
-      controls.target.copy(dieModel.position);
-      scene.add(floorModel);
-      scene.add(dieModel);
-      loop.updatables.push(dieModel);
+      controls.target.y = this.diceMid;
+      scene.add(this.floor);
+      this.setDiceNumber(1);
     }
 
     catch(error) {
@@ -64,6 +64,38 @@ class World {
 
   stop() {
     loop.stop();
+  }
+
+  // methods for getting input values
+  setDiceNumber(newNumber) {
+    // clear updatables and scene
+    for (let i = 0; i < this.dice.length; i++) {
+      scene.remove(this.dice[i]);
+    }
+
+    loop.updatables = loop.updatables.filter(obj => !this.dice.includes(obj));
+
+    // create new dice
+    this.dice = [];
+    const rowWidth = this.diceWidth * newNumber;
+    const diceStart = -rowWidth/2 + this.diceMid;
+
+    for (let i = 0; i < newNumber; i++) {
+      const newDie = new DieModel(this.dieColor);
+      const dieX = diceStart + this.diceWidth * i;
+      newDie.position.set(dieX , this.diceMid, 0);
+
+      this.dice.push(newDie);
+      scene.add(newDie);
+      loop.updatables.push(newDie);
+    }
+  }
+
+  setDieColor(newColor) {
+    this.dieColor = newColor
+    for (let i = 0; i < this.dice.length; i++) {
+      this.dice[i].setColor(newColor);
+    }
   }
 }
 
