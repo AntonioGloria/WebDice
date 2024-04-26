@@ -13,40 +13,33 @@ import { Loop } from './systems/Loop.js';
 import * as CANNON from 'cannon-es';
 import CannonDebugger from 'cannon-es-debugger';
 
-let camera;
-let controls;
-let renderer;
-let scene;
-let loop;
-
 class World {
   constructor(container) {
-    this.diceWidth = 0.016;
-    this.dieColor = 'white';
-    this.diceMid = this.diceWidth/2;
-
-    camera = createCamera();
-    renderer = createRenderer();
-    scene = createScene();
-    loop = new Loop(camera, scene, renderer);
-    container.append(renderer.domElement);
-    controls = createControls(camera, renderer.domElement);
+    this.camera = createCamera();
+    this.renderer = createRenderer();
+    this.scene = createScene();
+    this.loop = new Loop(this.camera, this.scene, this.renderer);
+    this.controls = createControls(this.camera, this.renderer.domElement);
+    this.loop.updatables.push(this.controls);
+    container.append(this.renderer.domElement);
+    this.resizer = new Resizer(container, this.camera, this.renderer);
 
     this.physics = new CANNON.World({
       gravity: new CANNON.Vec3(0, -9.82, 0)
     });
 
+    this.runPhysics = this.runPhysics.bind(this);
+    this.physDebugger = new CannonDebugger(this.scene, this.physics);
+
     const { ambientLight, mainLight } = createLights();
-
-    loop.updatables.push(controls);
-    scene.add(ambientLight, mainLight);
-
-    const resizer = new Resizer(container, camera, renderer);
+    this.scene.add(ambientLight, mainLight);
 
     this.floor = new Floor();
-    this.dice = [];
 
-    this.physics.addBody(this.floor.collider);
+    this.diceWidth = 0.016;
+    this.dieColor = 'white';
+    this.diceMid = this.diceWidth/2;
+    this.dice = [];
   }
 
   async init() {
@@ -54,18 +47,14 @@ class World {
       // const bgEnvMap = await loadEnvTexture(bgEnvMapPath);
       // scene.environment = bgEnvMap;
 
-      controls.target.y = this.diceMid;
-      scene.add(this.floor);
+      this.controls.target.y = this.diceMid;
+
+      this.scene.add(this.floor);
+      this.physics.addBody(this.floor.collider);
+
       this.setDiceNumber(1);
 
-      const cannonDebugger = new CannonDebugger(scene, this.physics);
-
-      const animate = () => {
-        this.physics.fixedStep();
-        cannonDebugger.update();
-        window.requestAnimationFrame(animate);
-      }
-      animate();
+      this.runPhysics();
     }
 
     catch(error) {
@@ -74,15 +63,15 @@ class World {
   }
 
   render() {
-    renderer.render(scene, camera);
+    this.renderer.render(this.scene, this.camera);
   }
 
   start() {
-    loop.start();
+    this.loop.start();
   }
 
   stop() {
-    loop.stop();
+    this.loop.stop();
   }
 
   // methods for getting input values
@@ -108,8 +97,8 @@ class World {
     this.setDiceNumber(this.dice.length);
 
     for (let i = 0; i < this.dice.length; i++) {
-      scene.add(this.dice[i]);
-      loop.updatables.push(this.dice[i]);
+      this.scene.add(this.dice[i]);
+      this.loop.updatables.push(this.dice[i]);
       this.physics.addBody(this.dice[i].collider);
     }
   }
@@ -117,12 +106,21 @@ class World {
   // Clear scene, updatables, physics, and world dice array
   clearDice() {
     for (let i = 0; i < this.dice.length; i++) {
-      scene.remove(this.dice[i]);
+      this.scene.remove(this.dice[i]);
       this.physics.removeBody(this.dice[i].collider);
     }
 
-    loop.updatables = loop.updatables.filter(obj => !this.dice.includes(obj));
+    this.loop.updatables = this.loop.updatables.filter(obj => {
+      return !this.dice.includes(obj)
+    });
+
     this.dice = [];
+  }
+
+  runPhysics() {
+    this.physics.fixedStep();
+    this.physDebugger.update();
+    window.requestAnimationFrame(this.runPhysics);
   }
 }
 
