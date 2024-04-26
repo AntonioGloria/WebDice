@@ -10,6 +10,7 @@ async function main() {
 
     const diceNumber = document.querySelector('#dice-num');
     const colorSelect = document.querySelector('#dice-color');
+    const rollBtn = document.querySelector('#roll-btn');
 
     colorSelect.addEventListener('change', (e) => {
       world.setDieColor(e.target.value);
@@ -18,6 +19,10 @@ async function main() {
     diceNumber.addEventListener('change', (e) => {
       world.setDiceNumber(e.target.value);
     });
+
+    rollBtn.addEventListener('click', () => {
+      world.rollDice();
+    })
   }
 
   catch(error) {

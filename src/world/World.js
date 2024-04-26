@@ -24,6 +24,7 @@ class World {
     this.diceWidth = 0.016;
     this.dieColor = 'white';
     this.diceMid = this.diceWidth/2;
+
     camera = createCamera();
     renderer = createRenderer();
     scene = createScene();
@@ -86,28 +87,13 @@ class World {
 
   // methods for getting input values
   setDiceNumber(newNumber) {
-    // clear updatables, scene, and physics
-    for (let i = 0; i < this.dice.length; i++) {
-      scene.remove(this.dice[i]);
-      this.physics.removeBody(this.dice[i].collider);
-    }
-
-    loop.updatables = loop.updatables.filter(obj => !this.dice.includes(obj));
+    this.clearDice();
 
     // create new dice
-    this.dice = [];
-    const rowWidth = this.diceWidth * newNumber;
-    const diceStart = -rowWidth/2 + this.diceMid;
-
     for (let i = 0; i < newNumber; i++) {
       const newDie = new DieModel(this.dieColor);
-      const dieX = diceStart + this.diceWidth * i;
-      newDie.position.set(dieX , this.diceMid, 0);
-
+      newDie.collider.position.set(0, this.diceWidth + 0.1, 0);
       this.dice.push(newDie);
-      scene.add(newDie);
-      loop.updatables.push(newDie);
-      this.physics.addBody(newDie.collider);
     }
   }
 
@@ -116,6 +102,27 @@ class World {
     for (let i = 0; i < this.dice.length; i++) {
       this.dice[i].setColor(newColor);
     }
+  }
+
+  rollDice() {
+    this.setDiceNumber(this.dice.length);
+
+    for (let i = 0; i < this.dice.length; i++) {
+      scene.add(this.dice[i]);
+      loop.updatables.push(this.dice[i]);
+      this.physics.addBody(this.dice[i].collider);
+    }
+  }
+
+  // Clear scene, updatables, physics, and world dice array
+  clearDice() {
+    for (let i = 0; i < this.dice.length; i++) {
+      scene.remove(this.dice[i]);
+      this.physics.removeBody(this.dice[i].collider);
+    }
+
+    loop.updatables = loop.updatables.filter(obj => !this.dice.includes(obj));
+    this.dice = [];
   }
 }
 

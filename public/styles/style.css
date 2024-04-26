@@ -33,7 +33,7 @@
   width: 4rem;
 }
 
-#roll-btn {
+button {
   background-color: slategray;
   color: white;
   border-style: none;

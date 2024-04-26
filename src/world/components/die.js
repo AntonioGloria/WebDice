@@ -1,5 +1,5 @@
 import { Mesh, TextureLoader, MeshStandardMaterial, SRGBColorSpace } from 'three';
-import { Body, Box, Trimesh, Vec3 } from 'cannon-es';
+import { Body, Box, Vec3 } from 'cannon-es';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 const gltfLoader = new GLTFLoader();
@@ -27,6 +27,10 @@ baseRedMap.colorSpace = SRGBColorSpace;
 class DieModel extends Mesh {
   constructor(color) {
     super();
+    this.initRotX = this.getRandomRadian();
+    this.initRotY = this.getRandomRadian();
+    this.initRotZ = this.getRandomRadian();
+
     this.geometry = this.setModel();
 
     this.collider = new Body({
@@ -41,6 +45,8 @@ class DieModel extends Mesh {
 
     this.castShadow = true;
     this.setColor(color);
+
+    this.collider.quaternion.setFromEuler(this.initRotX, this.initRotY, this.initRotZ);
   }
 
   setModel() {
@@ -67,6 +73,10 @@ class DieModel extends Mesh {
         this.material.map = baseWhiteMap;
         break;
     }
+  }
+
+  getRandomRadian() {
+    return Math.floor(Math.random()*2*Math.PI);
   }
 
   tick(delta) {
