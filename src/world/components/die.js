@@ -1,4 +1,4 @@
-import { Mesh, TextureLoader, MeshStandardMaterial, SRGBColorSpace } from 'three';
+import { Mesh, TextureLoader, MeshStandardMaterial, SRGBColorSpace, AxesHelper, Object3D, Vector3 } from 'three';
 import { Body, Box, Vec3 } from 'cannon-es';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
@@ -33,9 +33,33 @@ class DieModel extends Mesh {
 
     this.geometry = this.setModel();
 
+    this.maxX = this.geometry.boundingBox.max.x;
+    this.maxY = this.geometry.boundingBox.max.y;
+    this.maxZ = this.geometry.boundingBox.max.z;
+
+    this.minX = this.geometry.boundingBox.min.x;
+    this.minY = this.geometry.boundingBox.min.y;
+    this.minZ = this.geometry.boundingBox.min.z;
+
+    this.sidePositions = [
+      [0, this.maxY, 0],
+      [this.minX, 0, 0],
+      [0, 0, this.maxZ],
+      [this.maxX, 0, 0],
+      [0, this.minY, 0],
+      [0, 0, this.minZ],
+    ];
+
+    this.sides = this.sidePositions.map(coords => {
+      const side = new AxesHelper(0.01);
+      side.position.set(...coords);
+      this.add(side);
+      return side;
+    });
+
     this.collider = new Body({
       mass: 0.005,
-      shape: new Box(new Vec3(0.008, 0.008, 0.008))
+      shape: new Box(new Vec3(this.maxX, this.maxY, this.maxZ))
     });
 
     this.material = new MeshStandardMaterial({
@@ -73,6 +97,16 @@ class DieModel extends Mesh {
         this.material.map = baseWhiteMap;
         break;
     }
+  }
+
+  getDieValue() {
+    const worldYPositions = this.sides.map(side => {
+      const posVec = new Vector3();
+      return side.getWorldPosition(posVec).y;
+    });
+
+    const upY = Math.max(...worldYPositions);
+    return worldYPositions.indexOf(upY) + 1
   }
 
   getRandomRadian() {

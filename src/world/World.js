@@ -121,6 +121,11 @@ class World {
     this.physics.fixedStep();
     this.physDebugger.update();
     window.requestAnimationFrame(this.runPhysics);
+
+    const diceTotal = this.dice.reduce((acc, current) => {
+      return acc + current.getDieValue();
+    }, 0);
+    console.log("TOTAL: ", diceTotal);
   }
 }
 
