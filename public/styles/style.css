@@ -42,7 +42,10 @@ button {
   cursor: pointer;
 }
 
-#total-value {
+#result {
   font-size: x-large;
+}
+
+.number {
   color: darkorange;
 }

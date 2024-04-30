@@ -50,7 +50,6 @@ class World {
     this.dieColor = 'white';
     this.diceMid = this.diceWidth/2;
     this.dice = [];
-    this.totalValue = 0;
   }
 
   async init() {
@@ -131,19 +130,15 @@ class World {
   runPhysics() {
     this.physics.fixedStep();
     this.physDebugger.update();
-    window.requestAnimationFrame(this.runPhysics);
 
     // Check when collider sleepState is "sleepy"
     const diceStop = this.dice.every(die => die.collider.sleepState === 1);
 
     if (diceStop) {
-      const diceTotal = this.dice.reduce((acc, current) => {
-        return acc + current.getDieValue();
-      }, 0);
-
-      this.totalValue = diceTotal;
       this.container.dispatchEvent(this.diceEvent);
     }
+
+    window.requestAnimationFrame(this.runPhysics);
   }
 }
 
