@@ -17,7 +17,7 @@
 
 #control-panel {
   text-align: center;
-  padding: 1.5rem;
+  padding: 0.5rem;
   width: 100%;
   position: absolute;
   background-color: rgba(0, 0, 0, 0.5);
@@ -26,11 +26,11 @@
 #control-panel span, #control-panel p {
   color: white;
   font-weight: bold;
-  margin: 0 2rem;
+  margin: 0 0.24rem;
 }
 
 #control-panel input {
-  width: 4rem;
+  width: 3rem;
 }
 
 button {
@@ -43,7 +43,7 @@ button {
 }
 
 #result {
-  font-size: x-large;
+  font-size: large;
 }
 
 .number {

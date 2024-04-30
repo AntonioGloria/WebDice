@@ -11,7 +11,7 @@ import { Resizer } from './systems/Resizer.js';
 import { Loop } from './systems/Loop.js';
 
 import * as CANNON from 'cannon-es';
-import CannonDebugger from 'cannon-es-debugger';
+// import CannonDebugger from 'cannon-es-debugger';
 
 class World {
   constructor(container) {
@@ -39,7 +39,7 @@ class World {
     this.physics.allowSleep = true;
 
     this.runPhysics = this.runPhysics.bind(this);
-    this.physDebugger = new CannonDebugger(this.scene, this.physics);
+    // this.physDebugger = new CannonDebugger(this.scene, this.physics);
 
     const { ambientLight, mainLight } = createLights();
     this.scene.add(ambientLight, mainLight);
@@ -129,7 +129,7 @@ class World {
 
   runPhysics() {
     this.physics.fixedStep();
-    this.physDebugger.update();
+    // this.physDebugger.update();
 
     // Check when collider sleepState is "sleepy"
     const diceStop = this.dice.every(die => die.collider.sleepState === 1);
