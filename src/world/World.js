@@ -15,18 +15,28 @@ import CannonDebugger from 'cannon-es-debugger';
 
 class World {
   constructor(container) {
+    this.container = container;
+
+    this.diceEvent = new CustomEvent("diceStopped", {
+      detail: {
+        name: "dice-stopped",
+      },
+    });
+
     this.camera = createCamera();
     this.renderer = createRenderer();
     this.scene = createScene();
     this.loop = new Loop(this.camera, this.scene, this.renderer);
     this.controls = createControls(this.camera, this.renderer.domElement);
     this.loop.updatables.push(this.controls);
-    container.append(this.renderer.domElement);
-    this.resizer = new Resizer(container, this.camera, this.renderer);
+    this.container.append(this.renderer.domElement);
+    this.resizer = new Resizer(this.container, this.camera, this.renderer);
 
     this.physics = new CANNON.World({
       gravity: new CANNON.Vec3(0, -9.82, 0)
     });
+
+    this.physics.allowSleep = true;
 
     this.runPhysics = this.runPhysics.bind(this);
     this.physDebugger = new CannonDebugger(this.scene, this.physics);
@@ -40,6 +50,7 @@ class World {
     this.dieColor = 'white';
     this.diceMid = this.diceWidth/2;
     this.dice = [];
+    this.totalValue = 0;
   }
 
   async init() {
@@ -122,10 +133,17 @@ class World {
     this.physDebugger.update();
     window.requestAnimationFrame(this.runPhysics);
 
-    const diceTotal = this.dice.reduce((acc, current) => {
-      return acc + current.getDieValue();
-    }, 0);
-    console.log("TOTAL: ", diceTotal);
+    // Check when collider sleepState is "sleepy"
+    const diceStop = this.dice.every(die => die.collider.sleepState === 1);
+
+    if (diceStop) {
+      const diceTotal = this.dice.reduce((acc, current) => {
+        return acc + current.getDieValue();
+      }, 0);
+
+      this.totalValue = diceTotal;
+      this.container.dispatchEvent(this.diceEvent);
+    }
   }
 }
 

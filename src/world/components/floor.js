@@ -1,5 +1,5 @@
 import { Mesh, PlaneGeometry, MeshStandardMaterial, Color } from 'three';
-import { Body, Plane } from 'cannon-es';
+import { Body, Material, Plane } from 'cannon-es';
 
 class Floor extends Mesh {
   constructor() {
@@ -8,7 +8,11 @@ class Floor extends Mesh {
 
     this.collider = new Body({
       type: Body.STATIC,
-      shape: new Plane()
+      shape: new Plane(),
+      material: new Material({
+        friction: 2,
+        restitution: 1
+      })
     });
 
     this.material = new MeshStandardMaterial({

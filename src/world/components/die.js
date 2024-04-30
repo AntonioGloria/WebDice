@@ -1,5 +1,5 @@
-import { Mesh, TextureLoader, MeshStandardMaterial, SRGBColorSpace, AxesHelper, Object3D, Vector3 } from 'three';
-import { Body, Box, Vec3 } from 'cannon-es';
+import { Mesh, TextureLoader, MeshStandardMaterial, SRGBColorSpace, Object3D, Vector3 } from 'three';
+import { Body, Box, Material, Vec3 } from 'cannon-es';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 const gltfLoader = new GLTFLoader();
@@ -51,7 +51,7 @@ class DieModel extends Mesh {
     ];
 
     this.sides = this.sidePositions.map(coords => {
-      const side = new AxesHelper(0.01);
+      const side = new Object3D();
       side.position.set(...coords);
       this.add(side);
       return side;
@@ -59,8 +59,16 @@ class DieModel extends Mesh {
 
     this.collider = new Body({
       mass: 0.005,
-      shape: new Box(new Vec3(this.maxX, this.maxY, this.maxZ))
+      shape: new Box(new Vec3(this.maxX, this.maxY, this.maxZ)),
+      material: new Material({
+        friction: 0.1,
+        restitution: 0
+      })
     });
+
+    this.collider.allowSleep = true;
+    this.collider.sleepSpeedLimit = 1;
+    this.collider.sleepTimeLimit = 1;
 
     this.material = new MeshStandardMaterial({
       normalMap: normalMap,
@@ -70,13 +78,17 @@ class DieModel extends Mesh {
     this.castShadow = true;
     this.setColor(color);
 
-    this.collider.quaternion.setFromEuler(this.initRotX, this.initRotY, this.initRotZ);
+    this.collider.quaternion.setFromEuler(
+      this.initRotX,
+      this.initRotY,
+      this.initRotZ
+    );
   }
 
   setModel() {
     const [model] = modelData.scene.children;
     const { geometry } = model;
-    return geometry
+    return geometry;
   }
 
   setColor(color) {
@@ -106,7 +118,7 @@ class DieModel extends Mesh {
     });
 
     const upY = Math.max(...worldYPositions);
-    return worldYPositions.indexOf(upY) + 1
+    return worldYPositions.indexOf(upY) + 1;
   }
 
   getRandomRadian() {

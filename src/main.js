@@ -11,6 +11,7 @@ async function main() {
     const diceNumber = document.querySelector('#dice-num');
     const colorSelect = document.querySelector('#dice-color');
     const rollBtn = document.querySelector('#roll-btn');
+    const totalValue = document.querySelector('#total-value');
 
     colorSelect.addEventListener('change', (e) => {
       world.setDieColor(e.target.value);
@@ -22,7 +23,11 @@ async function main() {
 
     rollBtn.addEventListener('click', () => {
       world.rollDice();
-    })
+    });
+
+    world.container.addEventListener("diceStopped", () => {
+      totalValue.innerHTML = world.totalValue;
+    });
   }
 
   catch(error) {
