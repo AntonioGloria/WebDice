@@ -1,37 +1,11 @@
-import { Mesh, TextureLoader, MeshStandardMaterial, SRGBColorSpace, Object3D, Vector3 } from 'three';
+import { Mesh, Object3D, Vector3 } from 'three';
 import { Body, Box, Material, Vec3 } from 'cannon-es';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-
-const gltfLoader = new GLTFLoader();
-const modelPath = '/assets/models/die.glb';
-const modelData = await gltfLoader.loadAsync(modelPath);
-
-const texLoader = new TextureLoader();
-const baseWhitePath = '/assets/textures/Die_BaseColor_White.png'
-const baseBluePath = '/assets/textures/Die_BaseColor_Blue.png'
-const baseBlackPath = '/assets/textures/Die_BaseColor_Black.png'
-const baseRedPath = '/assets/textures/Die_BaseColor_Red.png'
-const normalMapPath = '/assets/textures/Die_Normal.png'
-
-const normalMap = await texLoader.loadAsync(normalMapPath);
-const baseWhiteMap = await texLoader.loadAsync(baseWhitePath);
-const baseBlueMap = await texLoader.loadAsync(baseBluePath);
-const baseBlackMap = await texLoader.loadAsync(baseBlackPath);
-const baseRedMap = await texLoader.loadAsync(baseRedPath);
-
-baseWhiteMap.colorSpace = SRGBColorSpace;
-baseBlueMap.colorSpace = SRGBColorSpace;
-baseBlackMap.colorSpace = SRGBColorSpace;
-baseRedMap.colorSpace = SRGBColorSpace;
 
 class DieModel extends Mesh {
-  constructor(color) {
+  constructor(geometry, material, color) {
     super();
-    this.initRotX = this.getRandomRadian();
-    this.initRotY = this.getRandomRadian();
-    this.initRotZ = this.getRandomRadian();
-
-    this.geometry = this.setModel();
+    this.geometry = geometry;
+    this.material = material;
 
     this.maxX = this.geometry.boundingBox.max.x;
     this.maxY = this.geometry.boundingBox.max.y;
@@ -40,6 +14,10 @@ class DieModel extends Mesh {
     this.minX = this.geometry.boundingBox.min.x;
     this.minY = this.geometry.boundingBox.min.y;
     this.minZ = this.geometry.boundingBox.min.z;
+
+    this.initRotX = this.getRandomRadian();
+    this.initRotY = this.getRandomRadian();
+    this.initRotZ = this.getRandomRadian();
 
     this.sidePositions = [
       [0, this.maxY, 0],
@@ -70,11 +48,6 @@ class DieModel extends Mesh {
     this.collider.sleepSpeedLimit = 1;
     this.collider.sleepTimeLimit = 1;
 
-    this.material = new MeshStandardMaterial({
-      normalMap: normalMap,
-      roughness: 0.2,
-    });
-
     this.castShadow = true;
     this.setColor(color);
 
@@ -85,30 +58,8 @@ class DieModel extends Mesh {
     );
   }
 
-  setModel() {
-    const [model] = modelData.scene.children;
-    const { geometry } = model;
-    return geometry;
-  }
-
   setColor(color) {
-    switch(color) {
-      case 'blue':
-        this.material.map = baseBlueMap;
-        break;
-
-      case 'red':
-        this.material.map = baseRedMap;
-        break;
-
-      case 'black':
-        this.material.map = baseBlackMap;
-        break;
-
-      default:
-        this.material.map = baseWhiteMap;
-        break;
-    }
+    this.material.map = color;
   }
 
   getDieValue() {
