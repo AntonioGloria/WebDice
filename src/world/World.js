@@ -8,7 +8,7 @@ import { createLights } from './components/lights.js';
 import { createScene } from './components/scene.js';
 
 import { loadModels } from './systems/assetLoaders/modelLoader.js';
-import { loadTextures } from './systems/assetLoaders/textureLoader.js';
+import { loadTextures, loadEnvTexture } from './systems/assetLoaders/textureLoader.js';
 import { createControls } from './systems/controls.js';
 import { createRenderer } from './systems/renderer.js';
 import { Resizer } from './systems/Resizer.js';
@@ -21,6 +21,7 @@ import * as CANNON from 'cannon-es';
 const dieModelPath = '/assets/models/die.glb';
 const normalMapPath = '/assets/textures/Die_Normal.png';
 
+const bgEnvMapPath = '/assets/textures/anniversary_lounge_1k.hdr'
 const colorMapPaths = [
   '/assets/textures/Die_BaseColor_White.png',
   '/assets/textures/Die_BaseColor_Blue.png',
@@ -59,6 +60,7 @@ class World {
     const { ambientLight, mainLight } = createLights();
     this.scene.add(ambientLight, mainLight);
 
+    this.bgEnvMap = undefined;
     this.floor = new Floor();
 
     this.diceWidth = 0.016;
@@ -101,8 +103,9 @@ class World {
         roughness: 0.2,
       });
 
-      // const bgEnvMap = await loadEnvTexture(bgEnvMapPath);
-      // scene.environment = bgEnvMap;
+      this.bgEnvMap = await loadEnvTexture(bgEnvMapPath);
+      this.scene.environment = this.bgEnvMap;
+      this.scene.environmentIntensity = 0.25;
 
       this.controls.target.y = this.diceMid;
 

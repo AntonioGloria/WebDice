@@ -1,15 +1,15 @@
 import { EquirectangularReflectionMapping, TextureLoader } from 'three';
-import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
+import { RGBELoader } from 'three/examples/jsm/Addons.js';
 
-const exrLoader = new EXRLoader();
+const hdrLoader = new RGBELoader();
 const texLoader = new TextureLoader();
 
 async function loadEnvTexture(filePath) {
   try {
-    const exrMap = await exrLoader.loadAsync(filePath);
-    exrMap.mapping = EquirectangularReflectionMapping;
+    const envMap = await hdrLoader.loadAsync(filePath);
+    envMap.mapping = EquirectangularReflectionMapping;
 
-    return exrMap;
+    return envMap;
   }
 
   catch(error) {
