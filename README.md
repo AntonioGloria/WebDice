@@ -1,5 +1,5 @@
 # WebDice
-WebDice is a simple app to roll digital 3D dice in a web browser. This project was to further tinker with `three.js` and explore other . The clock reads the time when the app loads, then calculates the angles of the hands and subsequent times base on the initial time.
+WebDice is a simple app to roll digital 3D dice in a web browser. This project was to further tinker with `three.js` and explore other features and capabilities. Users can set a number and color of dice, and a physical simulation of rolling dice will take place. The app also shows a breakdown of the numbers on each die and their total sum.
 
 ## Technologies
 - HTML
