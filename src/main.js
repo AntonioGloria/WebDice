@@ -46,6 +46,9 @@ async function main() {
 
     else {
       rollBtn.removeAttribute('hidden');
+      rollBtn.addEventListener('click', () => {
+        world.rollDice();
+      });
     }
 
     colorSelect.addEventListener('change', (e) => {
@@ -54,10 +57,6 @@ async function main() {
 
     diceNumber.addEventListener('change', (e) => {
       world.setDiceNumber(e.target.value);
-    });
-
-    rollBtn.addEventListener('click', () => {
-      world.rollDice();
     });
 
     world.container.addEventListener("diceStopped", () => {
